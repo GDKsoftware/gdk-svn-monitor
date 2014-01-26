@@ -1,0 +1,35 @@
+
+#container ul li span {
+    display: inline-block;
+}
+
+#container label {
+    font-weight: bold;
+}
+
+#container ul  {
+    padding-left: 0px;
+}
+    #container ul li {
+        list-style-type: none;
+    }
+        #container ul li span {
+            vertical-align: top;
+        }
+
+span.svnrev {
+    width: 50px;
+}
+span.svndt {
+    width: 110px;
+    font-size: small;
+}
+span.svnauthor {
+    width: 120px;
+}
+span.svnmsg {
+    width: 300px;
+}
+span.svnredmineissues {
+    min-width: 300px;
+}

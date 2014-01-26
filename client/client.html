@@ -1,16 +1,79 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 <script src="../node_modules/socket.io/node_modules/socket.io-client/dist/socket.io.js"></script>
+<link href="client.css" media="all" rel="stylesheet" type="text/css" />
 <script>
-  var socket = io.connect('http://192.168.1.15:8080');
+  var socket = io.connect('http://127.0.0.1:8080');
+
+  var svnrevs = [];
+
+  function idfriendlyfy(s) {
+      return s.replace(" ", "_");
+  }
+
+  function reformatdt(dt) {
+      var d = new Date(dt);
+
+      var h = d.getHours();
+      if (h < 10) {
+          h = "0" + h;
+      }
+
+      var m = d.getMinutes();
+      if (m < 10) {
+          m = "0" + m;
+      }
+
+      return $.datepicker.formatDate("dd-mm-yy", d) + " " + h + ":" + m;    // jquery-ui
+  }
 
   $(function () {
-
-    socket.on('log-update', function (data) {
-      console.log(data);
+    socket.on('welcome', function (data) {
+        console.log("welcome");
     });
-      
+
+    socket.on('redmine-update', function (data) {
+        var friendlyid = idfriendlyfy(data.repo);
+
+        if ( svnrevs[data.rev] ) {
+            $("#container ul#" + friendlyid + " li[data-rev=" + data.rev + "]").each(function() {
+                var elem = $(this).find("span.svnredmineissues");
+                if (elem.html() == "") {
+                    if (data.issue.subject) {
+                        elem.html(data.issue.subject);
+                    } else if (data.issue.description) {
+                        elem.html(data.issue.description);
+                    }
+                }
+            });
+        }
+    });
+
+    socket.on('logentry-update', function (data) {
+        if ( !svnrevs[data.data.revision] ) {
+            svnrevs[data.data.revision] = data.data;
+
+            var friendlyid = idfriendlyfy(data.repo);
+            if ( $("#container").find("ul#" + friendlyid).length == 0 ) {
+                $("#container").append("<label for='" + friendlyid + "'>" + data.repo + "</label><ul id='" + friendlyid + "'></ul>");
+            }
+
+            // todo: fancy css for this
+
+            $("#container ul#" + friendlyid).append(
+                    "<li data-rev='" + data.data.revision + "'>" +
+                        "<span class='svnrev'>" + data.data.revision + "</span>" +
+                        "<span class='svndt'>" + reformatdt(data.data.date) + "</span>" +
+                        "<span class='svnauthor'>" + data.data.author + "</span>" +
+                        "<span class='svnmsg'>" + (data.data.message ? data.data.message : "") + "</span>" +
+                        "<span class='svnredmineissues'></span>" +
+                    "</li>");
+        }
+    });
+
   });
 </script>
 <body>
-  <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+  <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto">
+  </div>
 </body>

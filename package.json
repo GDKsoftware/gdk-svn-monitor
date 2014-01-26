@@ -6,7 +6,9 @@
   },
   "devDependencies": {
     "svn": "git://github.com/GDKsoftware/node-svn.git#remoteurl",
-    "socket.io": "*"
+    "socket.io": "*",
+	"mysql": "*",
+	"node-rest-client": "*"
   },
   "private": true
 }
