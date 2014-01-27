@@ -5,7 +5,7 @@
     "node": ">= 0.10.21"
   },
   "devDependencies": {
-    "svn": "git://github.com/GDKsoftware/node-svn.git#remoteurl",
+    "svn": "git://github.com/GDKsoftware/node-svn.git#dev",
     "socket.io": "*",
 	"mysql": "*",
 	"node-rest-client": "*"
